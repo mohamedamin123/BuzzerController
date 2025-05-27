@@ -1,41 +1,41 @@
-#include <Arduino.h> // Nécessaire pour ledcSetup et autres
 #include "BuzzerController.h"
 
-BuzzerController::BuzzerController(uint8_t pin, uint8_t channel, uint16_t frequency, uint8_t resolution)
-    : _pin(pin), _channel(channel), _frequency(frequency), _resolution(resolution), _isOn(false) {}
+BuzzerController::BuzzerController(uint8_t pin, uint16_t frequency)
+    : _pin(pin), _frequency(frequency), _isOn(false) {}
 
 void BuzzerController::begin() {
     pinMode(_pin, OUTPUT);
-    ledcSetup(_channel, _frequency, _resolution);
-    ledcAttachPin(_pin, _channel);
+    digitalWrite(_pin, LOW);
 }
 
-void BuzzerController::on(uint8_t volume) {
-    ledcWrite(_channel, volume);
+void BuzzerController::on() {
+    tone(_pin, _frequency);
     _isOn = true;
 }
 
 void BuzzerController::off() {
-    ledcWrite(_channel, 0);
+    noTone(_pin);
     _isOn = false;
 }
 
-void BuzzerController::beep(uint16_t duration, uint8_t volume) {
-    on(volume);
+void BuzzerController::beep(uint16_t duration) {
+    on();
     delay(duration);
     off();
 }
 
-void BuzzerController::beepMultiple(uint8_t times, uint16_t duration, uint16_t interval, uint8_t volume) {
-    for (uint8_t i = 0; i < times; i++) {
-        beep(duration, volume);
+void BuzzerController::beepMultiple(uint8_t times, uint16_t duration, uint16_t interval) {
+    for (uint8_t i = 0; i < times; ++i) {
+        beep(duration);
         delay(interval);
     }
 }
 
 void BuzzerController::setFrequency(uint16_t frequency) {
     _frequency = frequency;
-    ledcSetup(_channel, _frequency, _resolution);
+    if (_isOn) {
+        tone(_pin, _frequency); // met à jour le son courant
+    }
 }
 
 bool BuzzerController::isActive() const {
