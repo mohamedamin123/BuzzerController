@@ -1,3 +1,4 @@
+#include <Arduino.h> // Nécessaire pour ledcSetup et autres
 #include "BuzzerController.h"
 
 BuzzerController::BuzzerController(uint8_t pin, uint8_t channel, uint16_t frequency, uint8_t resolution)

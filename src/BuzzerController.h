@@ -2,6 +2,7 @@
 #define BUZZERCONTROLLER_H
 
 #include <Arduino.h>
+#include <driver/ledc.h>  // optionnel mais utile
 
 class BuzzerController {
 public:
